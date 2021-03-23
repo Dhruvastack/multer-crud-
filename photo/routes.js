@@ -23,7 +23,7 @@ const upload = multer({
     callback(null, true);
   },
 });
-
+//post api
 router.post("/", upload.single("file"), (req, res, next) => {
   const photo = new Photo({
     file: req.file.filename,
@@ -44,7 +44,7 @@ router.post("/", upload.single("file"), (req, res, next) => {
       });
     });
 });
-
+//delete api
 router.delete("/:id", function (req, res) {
   Photo.findByIdAndRemove(req.params.id)
     .then((photo) => {
@@ -66,60 +66,72 @@ router.delete("/:id", function (req, res) {
       });
     });
 });
-
+//edit api
 router.put("/edit/:id", upload.single("file"), (req, res) => {
+  const id = req.params.id;
+  const file = req.file.filename;
   Photo.findByIdAndUpdate(
-    req.params.id,
-
+    id,
     {
       $set: {
-        file: req.file.filename,
+        file,
       },
     },
 
     { new: true }
   )
-    .then((photo) => {
-      if (!photo) {
+    .then((file) => {
+      if (!file) {
         return res.status(404).send({
-          message: "Photo not found with id " + req.params.id,
+          message: "Photo not found with id mmmmm " + req.params.id,
         });
       }
-      res.send(user);
+      res.send(file);
     })
     .catch((err) => {
       if (err.kind === "ObjectId") {
         return res.status(404).send({
-          message: "Photo not found with id " + req.params.id,
+          message: "Photo not found with id >>>>>>>>" + req.params.id,
         });
       }
       return res.status(500).send({
         message: "Error updating photo with id " + req.params.id,
       });
     });
-  // Photo.findOneAndUpdate(
-  //   id,
-  //   {
-  //     $set: {
-  //       file,
-  //     },
-  //   },
-  //   { new: true }
-  // )
-  //   // .then((post) => {
-  //   //   req.flash("success", "Edits submitted successfully");
-  //   // })
-  //   .then((result) => {
-  //     console.log(result);
-  //     res.status(200).json({
-  //       message: "Edited photo successfully",
-  //     });
-  //   })
-  //   .catch((err) => {
-  //     res.status(500).json({
-  //       error: err,
-  //     });
-  //   });
+});
+//get api
+router.get("/photos", (req, res) => {
+  Photo.find()
+
+    .then((files) => {
+      res.json({ files });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+// gett the files by id
+router.get("/:id", (req, res) => {
+  Photo.findById(req.params.id)
+    .then((file) => {
+      if (!file) {
+        return res.status(404).send({
+          message: "File not found with id " + req.params.id,
+        });
+      }
+      res.send(file);
+    })
+    .catch((err) => {
+      if (err.kind === "ObjectId") {
+        return res.status(404).send({
+          message: "File not found with id " + req.params.id,
+        });
+      }
+      return res.status(500).send({
+        message: "Error retrieving file with id " + req.params.id,
+      });
+    });
 });
 
 module.exports = router;

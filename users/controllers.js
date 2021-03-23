@@ -32,7 +32,7 @@ exports.create = (req, res) => {
 
 // Retrieve and return all users from the database.
 exports.findAll = (req, res) => {
-    //pagination 
+   //pagination 
 const limit_ = 8;
 const myCustomLabels = {
   totalDocs: "users",
@@ -108,7 +108,7 @@ exports.update = (req, res) => {
           message: "User not found with id " + req.params.userId,
         });
       }
-      res.send(user);
+      res.send(user,{ message: "User edited successfully!" });
     })
     .catch((err) => {
       if (err.kind === "ObjectId") {
