@@ -6,7 +6,7 @@ const UserSchema = mongoose.Schema({
     address:String
 
 }, 
-);
+{timestamps:true});
 UserSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('User', UserSchema);

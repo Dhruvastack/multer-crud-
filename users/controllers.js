@@ -1,6 +1,5 @@
 const User = require("./models.js");
 
-
 // Create and Save a new User
 exports.create = (req, res) => {
   // Validate request
@@ -32,19 +31,27 @@ exports.create = (req, res) => {
 
 // Retrieve and return all users from the database.
 exports.findAll = (req, res) => {
-   //pagination 
-const limit_ = 8;
-const myCustomLabels = {
-  totalDocs: "users",
-  docs: "userList",
-  page: "currentPage",
- 
-};
+  const sort = {};
+
+  //pagination
+  const limit_ = 8;
+  const myCustomLabels = {
+    totalDocs: "users",
+    docs: "userList",
+    page: "currentPage",
+  };
+
+  //sort By
+  if (req.query.sortBy) {
+    const str = req.query.sortBy.split(":");
+    sort[str[0]] = str[1] === "desc" ? -1 : 1;
+  }
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || limit_;
   const options = {
     page,
     limit,
+    sort,
     customLabels: myCustomLabels,
   };
   User.find();
@@ -108,7 +115,7 @@ exports.update = (req, res) => {
           message: "User not found with id " + req.params.userId,
         });
       }
-      res.send(user,{ message: "User edited successfully!" });
+      res.send(user, { message: "User edited successfully!" });
     })
     .catch((err) => {
       if (err.kind === "ObjectId") {
